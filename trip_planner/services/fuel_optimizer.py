@@ -338,6 +338,11 @@ def optimize_fuel_plan(
 
             for fuel_after_purchase in targets:
                 buy_h = fuel_after_purchase - fuel_h
+
+                # Enforce minimum purchase threshold (2.0 gal) to avoid micro-topoff stops
+                if buy_h > 0 and buy_h < 200 and fuel_after_purchase < MAX_FUEL_HUNDREDTHS:
+                    continue
+
                 purchase_cost = Decimal("0")
 
                 if buy_h > 0 and node_i.price_per_gallon is not None:

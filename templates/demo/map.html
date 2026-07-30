@@ -81,18 +81,6 @@
             text-transform: uppercase;
         }
 
-        .badge-success {
-            background: rgba(16, 185, 129, 0.12);
-            color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .badge-warning {
-            background: rgba(245, 158, 11, 0.12);
-            color: var(--warning);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-
         .main-layout {
             display: grid;
             grid-template-columns: 440px 1fr;
@@ -281,34 +269,10 @@
             letter-spacing: -0.03em;
         }
 
-        .cpm-badge {
-            background: rgba(16, 185, 129, 0.12);
-            border: 1px solid rgba(16, 185, 129, 0.25);
-            border-radius: 8px;
-            padding: 6px 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-        }
-
-        .cpm-label {
-            font-size: 0.65rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        .cpm-val {
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: var(--success);
-        }
-
-        /* Metric Grid Chips */
+        /* Unified 4-Metric Grid Chips */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 8px;
         }
 
@@ -316,7 +280,7 @@
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 8px 10px;
+            padding: 8px 12px;
             display: flex;
             flex-direction: column;
             gap: 2px;
@@ -337,12 +301,22 @@
             color: var(--text-primary);
         }
 
-        /* Fuel Stops Section Header */
+        .metric-val.highlight {
+            color: var(--success);
+        }
+
+        /* Fuel Stops Section Header & Legend */
         .section-header {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-top: 4px;
+        }
+
+        .section-header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 4px;
         }
 
         .section-header-title {
@@ -352,6 +326,31 @@
             letter-spacing: 0.05em;
             color: var(--text-secondary);
         }
+
+        .map-legend {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .dot-best { background: var(--success); }
+        .dot-avg { background: var(--accent); }
+        .dot-high { background: var(--warning); }
 
         /* Compact Two-Tier Stop Cards */
         .stops-list {
@@ -579,13 +578,9 @@
                         <div class="hero-cost-label">Total Fuel Cost</div>
                         <div class="hero-cost-amount" id="hero-cost">$0.00</div>
                     </div>
-                    <div class="cpm-badge">
-                        <span class="cpm-label">Cost / Mile</span>
-                        <span class="cpm-val" id="cost-per-mile">$0.00/mi</span>
-                    </div>
                 </div>
 
-                <!-- Secondary Metrics -->
+                <!-- Unified 4-Metric Grid Chips -->
                 <div class="metrics-grid">
                     <div class="metric-card">
                         <div class="metric-title">🛣️ Distance</div>
@@ -599,13 +594,24 @@
                         <div class="metric-title">⛽ Fuel Used</div>
                         <div class="metric-val" id="metric-fuel">—</div>
                     </div>
+                    <div class="metric-card">
+                        <div class="metric-title">📊 Cost / Mile</div>
+                        <div class="metric-val highlight" id="cost-per-mile">—</div>
+                    </div>
                 </div>
 
                 <!-- Fuel Stops Section -->
                 <div>
                     <div class="section-header">
-                        <span class="section-header-title">Fuel Stops Breakdown</span>
-                        <span class="badge" id="stops-count">0 STOPS</span>
+                        <div class="section-header-top">
+                            <span class="section-header-title">Fuel Stops Breakdown</span>
+                            <span class="badge" id="stops-count">0 STOPS</span>
+                        </div>
+                        <div class="map-legend">
+                            <span class="legend-item"><span class="legend-dot dot-best"></span> Lowest Price</span>
+                            <span class="legend-item"><span class="legend-dot dot-avg"></span> Mid Price</span>
+                            <span class="legend-item"><span class="legend-dot dot-high"></span> Highest Price</span>
+                        </div>
                     </div>
                     <div class="stops-list" id="stops-list" style="margin-top:8px;"></div>
                 </div>
@@ -717,7 +723,6 @@
             const summary = data.summary;
             const stops = data.fuel_stops;
 
-            // Hero Cost & Cost-per-mile calculation
             const totalCost = summary.total_fuel_cost_on_route_usd;
             const distMiles = data.route.distance_miles;
             const cpm = distMiles > 0 ? (totalCost / distMiles) : 0;
@@ -761,12 +766,6 @@
                     badgeClass = 'badge-high';
                 }
 
-                // Format clean address without duplicate city duplication
-                let cleanLoc = `${stop.city}, ${stop.state}`;
-                if (stop.address && !stop.address.toLowerCase().includes(stop.city.toLowerCase())) {
-                    cleanLoc = `${stop.address} · ${cleanLoc}`;
-                }
-
                 const card = document.createElement('div');
                 card.className = 'stop-card';
                 card.dataset.seq = stop.sequence;
@@ -774,7 +773,7 @@
                     <div class="stop-tier-1">
                         <div class="stop-title-group">
                             <div class="stop-badge ${badgeClass}">${stop.sequence}</div>
-                            <div class="stop-name" title="${stop.name}">${stop.name}</div>
+                            <div class="stop-name" title="${stop.name}">${stop.name} (${stop.city}, ${stop.state})</div>
                         </div>
                         <div class="stop-price-pill ${priceClass}">$${price.toFixed(3)}/gal</div>
                     </div>
