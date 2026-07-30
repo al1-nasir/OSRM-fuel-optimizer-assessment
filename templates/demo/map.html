@@ -21,18 +21,18 @@
             --bg-primary: #0b0f19;
             --bg-secondary: #131c2e;
             --bg-card: #1a243b;
-            --bg-hover: #23304d;
+            --bg-hover: #22304e;
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
             --accent: #3b82f6;
             --accent-hover: #2563eb;
             --success: #10b981;
-            --success-glow: rgba(16, 185, 129, 0.2);
+            --success-glow: rgba(16, 185, 129, 0.15);
             --warning: #f59e0b;
             --danger: #ef4444;
             --border: #26334d;
-            --radius: 12px;
+            --radius: 10px;
             --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
@@ -73,11 +73,24 @@
             background: rgba(59, 130, 246, 0.12);
             color: var(--accent);
             border: 1px solid rgba(59, 130, 246, 0.3);
-            padding: 2px 10px;
+            padding: 3px 10px;
             border-radius: 20px;
             font-size: 0.72rem;
-            font-weight: 600;
+            font-weight: 700;
             letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.12);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
         }
 
         .main-layout {
@@ -96,7 +109,7 @@
         }
 
         .sidebar-header {
-            padding: 20px 20px 16px 20px;
+            padding: 18px 20px 14px 20px;
             border-bottom: 1px solid var(--border);
             background: var(--bg-secondary);
             flex-shrink: 0;
@@ -106,7 +119,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .form-group {
@@ -153,26 +166,21 @@
             background: var(--bg-primary);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 10px 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .fuel-control-top {
+            padding: 8px 12px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 12px;
         }
 
         .fuel-val-badge {
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             font-weight: 700;
             color: var(--success);
+            white-space: nowrap;
         }
 
         .fuel-slider {
-            width: 100%;
+            flex: 1;
             accent-color: var(--accent);
             cursor: pointer;
             height: 4px;
@@ -180,12 +188,12 @@
 
         .btn-primary {
             width: 100%;
-            padding: 11px;
+            padding: 10px;
             background: linear-gradient(135deg, var(--accent), var(--accent-hover));
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
@@ -228,11 +236,11 @@
             padding: 16px 20px 24px 20px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
         }
 
         .sidebar-body::-webkit-scrollbar {
-            width: 6px;
+            width: 5px;
         }
 
         .sidebar-body::-webkit-scrollbar-track {
@@ -246,7 +254,7 @@
 
         /* Hero Cost Card */
         .hero-cost-card {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(15, 23, 42, 0.6) 100%);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(19, 28, 46, 0.8) 100%);
             border: 1px solid rgba(16, 185, 129, 0.3);
             border-radius: var(--radius);
             padding: 16px 20px;
@@ -257,7 +265,7 @@
         }
 
         .hero-cost-label {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -273,26 +281,45 @@
             letter-spacing: -0.03em;
         }
 
-        .hero-cost-icon {
-            font-size: 2.2rem;
-            opacity: 0.85;
+        .cpm-badge {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 8px;
+            padding: 6px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
         }
 
-        /* Metric Grid Cards */
+        .cpm-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .cpm-val {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--success);
+        }
+
+        /* Metric Grid Chips */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 8px;
         }
 
         .metric-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px 12px;
+            border-radius: 8px;
+            padding: 8px 10px;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 2px;
         }
 
         .metric-title {
@@ -305,39 +332,44 @@
         }
 
         .metric-val {
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             font-weight: 700;
             color: var(--text-primary);
         }
 
         /* Fuel Stops Section Header */
         .section-header {
-            font-size: 0.78rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 4px;
+        }
+
+        .section-header-title {
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--text-secondary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 4px;
         }
 
-        /* Stop Cards List */
+        /* Compact Two-Tier Stop Cards */
         .stops-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .stop-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px 14px;
+            border-radius: 8px;
+            padding: 10px 12px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
+            transition: all 0.18s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .stop-card:hover {
@@ -352,28 +384,29 @@
             background: rgba(59, 130, 246, 0.12);
         }
 
-        .stop-top {
+        /* Line 1: Badge, Station Name, Price */
+        .stop-tier-1 {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 6px;
+            gap: 8px;
         }
 
         .stop-title-group {
             display: flex;
             align-items: center;
-            gap: 10px;
-            flex: 1;
+            gap: 8px;
             min-width: 0;
+            flex: 1;
         }
 
         .stop-badge {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             background: var(--accent);
             color: white;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 800;
             display: flex;
             align-items: center;
@@ -381,8 +414,11 @@
             flex-shrink: 0;
         }
 
+        .stop-badge.badge-best { background: var(--success); }
+        .stop-badge.badge-high { background: var(--warning); }
+
         .stop-name {
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             font-weight: 700;
             color: var(--text-primary);
             white-space: nowrap;
@@ -390,47 +426,62 @@
             text-overflow: ellipsis;
         }
 
-        .stop-price-badge {
-            background: rgba(16, 185, 129, 0.12);
-            color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.25);
-            padding: 3px 8px;
+        .stop-price-pill {
+            padding: 2px 7px;
             border-radius: 6px;
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             font-weight: 700;
+            white-space: nowrap;
             flex-shrink: 0;
         }
 
-        .stop-meta {
-            font-size: 0.78rem;
-            color: var(--text-secondary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            line-height: 1.4;
+        .stop-price-pill.price-best {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
-        .stop-address {
-            color: var(--text-muted);
-            font-size: 0.74rem;
-            margin-bottom: 4px;
+        .stop-price-pill.price-avg {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .stop-price-pill.price-high {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        /* Line 2: Single Compact Meta Details */
+        .stop-tier-2 {
+            font-size: 0.76rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-left: 30px;
+        }
+
+        .stop-meta-compact {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .stop-buy {
-            font-weight: 600;
+        .stop-cost-bold {
+            font-weight: 700;
             color: var(--text-primary);
+            white-space: nowrap;
         }
 
         .error-box {
             background: rgba(239, 68, 68, 0.12);
             border: 1px solid rgba(239, 68, 68, 0.3);
             border-radius: 8px;
-            padding: 12px 14px;
+            padding: 10px 12px;
             color: var(--danger);
-            font-size: 0.85rem;
+            font-size: 0.84rem;
             display: none;
             line-height: 1.4;
         }
@@ -447,7 +498,7 @@
         .leaflet-popup-content-wrapper {
             background: var(--bg-card) !important;
             color: var(--text-primary) !important;
-            border-radius: 10px !important;
+            border-radius: 8px !important;
             border: 1px solid var(--border) !important;
             box-shadow: var(--shadow) !important;
             padding: 4px !important;
@@ -459,9 +510,9 @@
 
         .leaflet-popup-content {
             font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            line-height: 1.5;
-            margin: 10px 12px !important;
+            font-size: 0.82rem;
+            line-height: 1.4;
+            margin: 8px 10px !important;
         }
 
         @media (max-width: 900px) {
@@ -478,7 +529,7 @@
 <body>
     <header class="app-header">
         <div class="app-title">
-            <span style="font-size:1.3rem;">⛽</span>
+            <span style="font-size:1.25rem;">⛽</span>
             <h1>Fuel Route Planner</h1>
             <span class="badge">Production API</span>
         </div>
@@ -518,7 +569,7 @@
                     </button>
                 </form>
 
-                <div class="error-box" id="error-box" style="margin-top:12px;"></div>
+                <div class="error-box" id="error-box" style="margin-top:10px;"></div>
             </div>
 
             <div class="sidebar-body" id="sidebar-body" style="display:none;">
@@ -528,7 +579,10 @@
                         <div class="hero-cost-label">Total Fuel Cost</div>
                         <div class="hero-cost-amount" id="hero-cost">$0.00</div>
                     </div>
-                    <div class="hero-cost-icon">💵</div>
+                    <div class="cpm-badge">
+                        <span class="cpm-label">Cost / Mile</span>
+                        <span class="cpm-val" id="cost-per-mile">$0.00/mi</span>
+                    </div>
                 </div>
 
                 <!-- Secondary Metrics -->
@@ -550,10 +604,10 @@
                 <!-- Fuel Stops Section -->
                 <div>
                     <div class="section-header">
-                        <span>Fuel Stops Breakdown</span>
-                        <span id="stops-count" style="color:var(--accent); font-weight:800;">—</span>
+                        <span class="section-header-title">Fuel Stops Breakdown</span>
+                        <span class="badge" id="stops-count">0 STOPS</span>
                     </div>
-                    <div class="stops-list" id="stops-list" style="margin-top:10px;"></div>
+                    <div class="stops-list" id="stops-list" style="margin-top:8px;"></div>
                 </div>
             </div>
         </aside>
@@ -567,7 +621,7 @@
             crossorigin=""></script>
 
     <script>
-        // Sync fuel slider with hidden field and display badge
+        // Sync fuel slider with display badge
         const fuelSlider = document.getElementById('fuel-slider');
         const fuelInput = document.getElementById('fuel');
         const fuelDisplay = document.getElementById('fuel-display');
@@ -589,27 +643,27 @@
         let markersLayer = L.layerGroup().addTo(map);
         let stationMarkersMap = {};
 
-        // Custom Markers
+        // Custom Icons
         const originIcon = L.divIcon({
             className: 'custom-marker',
-            html: '<div style="background:#10b981;color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;border:2.5px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.4);">A</div>',
-            iconSize: [30, 30],
-            iconAnchor: [15, 15],
+            html: '<div style="background:#10b981;color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;border:2px solid white;box-shadow:0 3px 8px rgba(0,0,0,0.4);">A</div>',
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
         });
 
         const destIcon = L.divIcon({
             className: 'custom-marker',
-            html: '<div style="background:#ef4444;color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;border:2.5px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.4);">B</div>',
-            iconSize: [30, 30],
-            iconAnchor: [15, 15],
+            html: '<div style="background:#ef4444;color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;border:2px solid white;box-shadow:0 3px 8px rgba(0,0,0,0.4);">B</div>',
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
         });
 
-        function createStationIcon(num, priceColor = '#3b82f6') {
+        function createStationIcon(num, pinColor = '#3b82f6') {
             return L.divIcon({
                 className: 'custom-marker',
-                html: `<div style="background:${priceColor};color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;border:2px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.35);">${num}</div>`,
-                iconSize: [28, 28],
-                iconAnchor: [14, 14],
+                html: `<div style="background:${pinColor};color:white;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.35);">${num}</div>`,
+                iconSize: [26, 26],
+                iconAnchor: [13, 13],
             });
         }
 
@@ -663,9 +717,15 @@
             const summary = data.summary;
             const stops = data.fuel_stops;
 
-            // Hero Cost & Summary Metrics
-            document.getElementById('hero-cost').textContent = `$${summary.total_fuel_cost_on_route_usd.toFixed(2)}`;
-            document.getElementById('metric-dist').textContent = `${data.route.distance_miles.toFixed(0)} mi`;
+            // Hero Cost & Cost-per-mile calculation
+            const totalCost = summary.total_fuel_cost_on_route_usd;
+            const distMiles = data.route.distance_miles;
+            const cpm = distMiles > 0 ? (totalCost / distMiles) : 0;
+
+            document.getElementById('hero-cost').textContent = `$${totalCost.toFixed(2)}`;
+            document.getElementById('cost-per-mile').textContent = `$${cpm.toFixed(3)}/mi`;
+
+            document.getElementById('metric-dist').textContent = `${distMiles.toFixed(0)} mi`;
             document.getElementById('metric-time').textContent = `${(data.route.estimated_duration_minutes / 60).toFixed(1)} hrs`;
             document.getElementById('metric-fuel').textContent = `${summary.total_route_fuel_used_gallons.toFixed(1)} gal`;
 
@@ -673,32 +733,54 @@
             const stopsList = document.getElementById('stops-list');
             const stopsCountBadge = document.getElementById('stops-count');
             stopsList.innerHTML = '';
-            stopsCountBadge.textContent = `${stops.length} Stop${stops.length === 1 ? '' : 's'}`;
+            stopsCountBadge.textContent = `${stops.length} STOP${stops.length === 1 ? '' : 'S'}`;
 
             if (stops.length === 0) {
                 stopsList.innerHTML = `
-                    <div style="background:var(--bg-card); padding:14px; border-radius:10px; border:1px solid var(--border); text-align:center; font-size:0.85rem; color:var(--text-secondary);">
+                    <div style="background:var(--bg-card); padding:12px; border-radius:8px; border:1px solid var(--border); text-align:center; font-size:0.82rem; color:var(--text-secondary);">
                         ✅ Starting tank is sufficient for this entire route without fuel stops.
                     </div>`;
                 return;
             }
 
+            // Min and Max prices for relative tinting
+            const prices = stops.map(s => s.price_per_gallon);
+            const minPrice = Math.min(...prices);
+            const maxPrice = Math.max(...prices);
+
             stops.forEach(stop => {
+                const price = stop.price_per_gallon;
+                let priceClass = 'price-avg';
+                let badgeClass = '';
+
+                if (price === minPrice) {
+                    priceClass = 'price-best';
+                    badgeClass = 'badge-best';
+                } else if (price === maxPrice && maxPrice !== minPrice) {
+                    priceClass = 'price-high';
+                    badgeClass = 'badge-high';
+                }
+
+                // Format clean address without duplicate city duplication
+                let cleanLoc = `${stop.city}, ${stop.state}`;
+                if (stop.address && !stop.address.toLowerCase().includes(stop.city.toLowerCase())) {
+                    cleanLoc = `${stop.address} · ${cleanLoc}`;
+                }
+
                 const card = document.createElement('div');
                 card.className = 'stop-card';
                 card.dataset.seq = stop.sequence;
                 card.innerHTML = `
-                    <div class="stop-top">
+                    <div class="stop-tier-1">
                         <div class="stop-title-group">
-                            <div class="stop-badge">${stop.sequence}</div>
+                            <div class="stop-badge ${badgeClass}">${stop.sequence}</div>
                             <div class="stop-name" title="${stop.name}">${stop.name}</div>
                         </div>
-                        <div class="stop-price-badge">$${stop.price_per_gallon.toFixed(3)} / gal</div>
+                        <div class="stop-price-pill ${priceClass}">$${price.toFixed(3)}/gal</div>
                     </div>
-                    <div class="stop-address">${stop.address}, ${stop.city}, ${stop.state}</div>
-                    <div class="stop-meta">
-                        <span>Mile ${stop.route_position_miles.toFixed(1)} (${stop.distance_from_route_miles.toFixed(1)} mi off route)</span>
-                        <span class="stop-buy">Buy ${stop.gallons_to_buy.toFixed(2)} gal ($${stop.cost_usd.toFixed(2)})</span>
+                    <div class="stop-tier-2">
+                        <span class="stop-meta-compact">Mile ${stop.route_position_miles.toFixed(1)} · ${stop.distance_from_route_miles.toFixed(1)} mi off</span>
+                        <span class="stop-cost-bold">Buy ${stop.gallons_to_buy.toFixed(1)} gal ($${stop.cost_usd.toFixed(2)})</span>
                     </div>
                 `;
 
@@ -709,7 +791,7 @@
 
                     if (stationMarkersMap[stop.sequence]) {
                         const marker = stationMarkersMap[stop.sequence];
-                        map.flyTo(marker.getLatLng(), 11, { duration: 1.2 });
+                        map.flyTo(marker.getLatLng(), 11, { duration: 1.0 });
                         marker.openPopup();
                     }
                 });
@@ -722,6 +804,11 @@
             if (routeLayer) map.removeLayer(routeLayer);
             markersLayer.clearLayers();
             stationMarkersMap = {};
+
+            const stops = data.fuel_stops;
+            const prices = stops.map(s => s.price_per_gallon);
+            const minPrice = prices.length ? Math.min(...prices) : 0;
+            const maxPrice = prices.length ? Math.max(...prices) : 0;
 
             // Render route polyline
             const routeCoords = data.route.geometry.coordinates.map(c => [c[1], c[0]]);
@@ -741,16 +828,20 @@
                 .bindPopup(`<strong>Destination</strong><br>${data.destination.label}`)
                 .addTo(markersLayer);
 
-            // Fuel Stops
-            data.fuel_stops.forEach(stop => {
+            // Fuel Stops with Color-Coded Pins
+            stops.forEach(stop => {
+                let pinColor = '#3b82f6';
+                if (stop.price_per_gallon === minPrice) pinColor = '#10b981';
+                else if (stop.price_per_gallon === maxPrice && maxPrice !== minPrice) pinColor = '#f59e0b';
+
                 const marker = L.marker([stop.location.latitude, stop.location.longitude], {
-                    icon: createStationIcon(stop.sequence, '#3b82f6')
+                    icon: createStationIcon(stop.sequence, pinColor)
                 }).bindPopup(`
-                    <strong style="color:#f8fafc;font-size:0.95rem;">${stop.name}</strong><br>
-                    <span style="color:#94a3b8;font-size:0.8rem;">${stop.address}, ${stop.city}, ${stop.state}</span><br>
-                    <hr style="border:0;border-top:1px solid #26334d;margin:6px 0;">
+                    <strong style="color:#f8fafc;font-size:0.9rem;">${stop.name}</strong><br>
+                    <span style="color:#94a3b8;font-size:0.78rem;">${stop.address}, ${stop.city}, ${stop.state}</span><br>
+                    <hr style="border:0;border-top:1px solid #26334d;margin:5px 0;">
                     <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <span style="color:#10b981;font-weight:800;font-size:0.9rem;">$${stop.price_per_gallon.toFixed(3)}/gal</span>
+                        <span style="color:#10b981;font-weight:800;font-size:0.88rem;">$${stop.price_per_gallon.toFixed(3)}/gal</span>
                         <span style="font-weight:700;color:#f8fafc;">Buy ${stop.gallons_to_buy.toFixed(2)} gal</span>
                     </div>
                 `).addTo(markersLayer);
