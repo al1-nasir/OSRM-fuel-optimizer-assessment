@@ -1,0 +1,124 @@
+{
+    "info": {
+        "name": "Fuel Route Planner API",
+        "description": "API collection for the Fuel Route Planner — optimal fuel stop recommendations for US driving routes.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Plan Fuel Route — Dallas to Atlanta",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"start\": \"Dallas, TX\",\n    \"finish\": \"Atlanta, GA\",\n    \"starting_fuel_gallons\": 50\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:8000/api/v1/trips/fuel-plan/",
+                    "protocol": "http",
+                    "host": ["localhost"],
+                    "port": "8000",
+                    "path": ["api", "v1", "trips", "fuel-plan", ""]
+                }
+            }
+        },
+        {
+            "name": "Plan Fuel Route — Short Trip (Dallas to Austin)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"start\": \"Dallas, TX\",\n    \"finish\": \"Austin, TX\",\n    \"starting_fuel_gallons\": 50\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:8000/api/v1/trips/fuel-plan/",
+                    "protocol": "http",
+                    "host": ["localhost"],
+                    "port": "8000",
+                    "path": ["api", "v1", "trips", "fuel-plan", ""]
+                }
+            }
+        },
+        {
+            "name": "Plan Fuel Route — Long Trip (LA to NYC)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"start\": \"Los Angeles, CA\",\n    \"finish\": \"New York, NY\",\n    \"starting_fuel_gallons\": 50\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:8000/api/v1/trips/fuel-plan/",
+                    "protocol": "http",
+                    "host": ["localhost"],
+                    "port": "8000",
+                    "path": ["api", "v1", "trips", "fuel-plan", ""]
+                }
+            }
+        },
+        {
+            "name": "Plan Fuel Route — Partial Tank",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"start\": \"Dallas, TX\",\n    \"finish\": \"Atlanta, GA\",\n    \"starting_fuel_gallons\": 20\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:8000/api/v1/trips/fuel-plan/",
+                    "protocol": "http",
+                    "host": ["localhost"],
+                    "port": "8000",
+                    "path": ["api", "v1", "trips", "fuel-plan", ""]
+                }
+            }
+        },
+        {
+            "name": "Invalid Request — Missing Fields",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"start\": \"Dallas, TX\"\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:8000/api/v1/trips/fuel-plan/",
+                    "protocol": "http",
+                    "host": ["localhost"],
+                    "port": "8000",
+                    "path": ["api", "v1", "trips", "fuel-plan", ""]
+                }
+            }
+        }
+    ]
+}
