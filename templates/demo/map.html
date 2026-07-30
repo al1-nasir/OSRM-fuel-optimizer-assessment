@@ -3,255 +3,436 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fuel Route Planner — Map Demo</title>
-    <meta name="description" content="Interactive map demonstrating the Fuel Route Planner API with optimal fuel stops along driving routes.">
+    <title>Fuel Route Planner — Interactive Dashboard</title>
+    <meta name="description" content="Production-grade fuel route optimization dashboard with interactive Leaflet map and dynamic cost breakdowns.">
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin="" />
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-card: #1e293b;
-            --text-primary: #f1f5f9;
+            --bg-primary: #0b0f19;
+            --bg-secondary: #131c2e;
+            --bg-card: #1a243b;
+            --bg-hover: #23304d;
+            --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
+            --text-muted: #64748b;
             --accent: #3b82f6;
             --accent-hover: #2563eb;
             --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.2);
             --warning: #f59e0b;
             --danger: #ef4444;
-            --border: #334155;
+            --border: #26334d;
             --radius: 12px;
-            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
         }
-
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
         .app-header {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            background: var(--bg-secondary);
             border-bottom: 1px solid var(--border);
-            padding: 16px 24px;
+            padding: 12px 24px;
             display: flex;
             align-items: center;
-            gap: 16px;
+            justify-content: space-between;
+            height: 56px;
         }
 
-        .app-header h1 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent), #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .app-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .app-header .badge {
-            background: rgba(59, 130, 246, 0.15);
+        .app-title h1 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .badge {
+            background: rgba(59, 130, 246, 0.12);
             color: var(--accent);
-            padding: 4px 12px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 2px 10px;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 600;
+            letter-spacing: 0.03em;
         }
 
         .main-layout {
             display: grid;
-            grid-template-columns: 380px 1fr;
-            height: calc(100vh - 64px);
+            grid-template-columns: 440px 1fr;
+            height: calc(100vh - 56px);
         }
 
         .sidebar {
             background: var(--bg-secondary);
             border-right: 1px solid var(--border);
-            overflow-y: auto;
-            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 20px 20px 16px 20px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+            flex-shrink: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 14px;
         }
 
         .form-group {
-            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
         }
 
         .form-group label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.72rem;
+            font-weight: 700;
             color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            letter-spacing: 0.05em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .form-group input {
+        .form-group input[type="text"] {
             width: 100%;
-            padding: 10px 14px;
+            padding: 9px 12px;
             background: var(--bg-primary);
             border: 1px solid var(--border);
             border-radius: 8px;
             color: var(--text-primary);
-            font-size: 0.95rem;
-            transition: border-color 0.2s;
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: all 0.2s;
         }
 
-        .form-group input:focus {
+        .form-group input[type="text"]:focus {
             outline: none;
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
 
+        /* Fuel Range & Stepper */
+        .fuel-control {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .fuel-control-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .fuel-val-badge {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .fuel-slider {
+            width: 100%;
+            accent-color: var(--accent);
+            cursor: pointer;
+            height: 4px;
+        }
+
         .btn-primary {
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, var(--accent), #2563eb);
+            padding: 11px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 0.92rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
-            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
         }
 
         .btn-primary:hover {
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45);
         }
 
         .btn-primary:active { transform: translateY(0); }
 
         .btn-primary:disabled {
-            opacity: 0.5;
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
 
         .spinner {
             display: none;
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             border: 2px solid rgba(255,255,255,0.3);
             border-top: 2px solid white;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin: 0 auto;
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .results-panel {
-            margin-top: 20px;
-            display: none;
+        /* Scrollable Results Area */
+        .sidebar-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px 24px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        .results-panel.active { display: block; }
+        .sidebar-body::-webkit-scrollbar {
+            width: 6px;
+        }
 
-        .result-card {
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
+        .sidebar-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-body::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        /* Hero Cost Card */
+        .hero-cost-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(15, 23, 42, 0.6) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
             border-radius: var(--radius);
-            padding: 16px;
-            margin-bottom: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--success-glow);
         }
 
-        .result-card h3 {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--accent);
+        .hero-cost-label {
+            font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 10px;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
         }
 
-        .stat-row {
+        .hero-cost-amount {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: var(--success);
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+        }
+
+        .hero-cost-icon {
+            font-size: 2.2rem;
+            opacity: 0.85;
+        }
+
+        /* Metric Grid Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .metric-title {
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .metric-val {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Fuel Stops Section Header */
+        .section-header {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
             display: flex;
             justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+            align-items: center;
+            margin-top: 4px;
         }
 
-        .stat-row:last-child { border-bottom: none; }
-
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-        }
-
-        .stat-value {
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .stat-value.cost {
-            color: var(--success);
-            font-size: 1.1rem;
+        /* Stop Cards List */
+        .stops-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .stop-card {
-            background: rgba(59, 130, 246, 0.05);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
         }
 
-        .stop-header {
+        .stop-card:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent);
+            transform: translateX(3px);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
+        }
+
+        .stop-card.active-stop {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.12);
+        }
+
+        .stop-top {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            justify-content: space-between;
+            margin-bottom: 6px;
         }
 
-        .stop-number {
-            background: var(--accent);
-            color: white;
+        .stop-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .stop-badge {
             width: 24px;
             height: 24px;
             border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 800;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 700;
+            flex-shrink: 0;
         }
 
         .stop-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-            flex: 1;
-            margin-left: 10px;
-        }
-
-        .stop-price {
-            color: var(--success);
+            font-size: 0.88rem;
             font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .stop-details {
-            font-size: 0.8rem;
+        .stop-price-badge {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .stop-meta {
+            font-size: 0.78rem;
             color: var(--text-secondary);
-            line-height: 1.6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            line-height: 1.4;
+        }
+
+        .stop-address {
+            color: var(--text-muted);
+            font-size: 0.74rem;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .stop-buy {
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
         .error-box {
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(239, 68, 68, 0.12);
             border: 1px solid rgba(239, 68, 68, 0.3);
             border-radius: 8px;
-            padding: 12px;
+            padding: 12px 14px;
             color: var(--danger);
-            font-size: 0.9rem;
-            margin-top: 12px;
+            font-size: 0.85rem;
             display: none;
+            line-height: 1.4;
         }
 
         .error-box.active { display: block; }
@@ -259,14 +440,17 @@
         #map {
             width: 100%;
             height: 100%;
+            background: var(--bg-primary);
         }
 
-        /* Custom Leaflet popup */
+        /* Leaflet Popup Styling */
         .leaflet-popup-content-wrapper {
             background: var(--bg-card) !important;
             color: var(--text-primary) !important;
-            border-radius: 8px !important;
+            border-radius: 10px !important;
+            border: 1px solid var(--border) !important;
             box-shadow: var(--shadow) !important;
+            padding: 4px !important;
         }
 
         .leaflet-popup-tip {
@@ -277,86 +461,100 @@
             font-family: 'Inter', sans-serif;
             font-size: 0.85rem;
             line-height: 1.5;
+            margin: 10px 12px !important;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             .main-layout {
                 grid-template-columns: 1fr;
                 grid-template-rows: auto 1fr;
             }
             .sidebar {
-                max-height: 40vh;
+                height: 50vh;
             }
         }
     </style>
 </head>
 <body>
     <header class="app-header">
-        <h1>⛽ Fuel Route Planner</h1>
-        <span class="badge">API Demo</span>
+        <div class="app-title">
+            <span style="font-size:1.3rem;">⛽</span>
+            <h1>Fuel Route Planner</h1>
+            <span class="badge">Production API</span>
+        </div>
+        <div style="font-size:0.75rem; color:var(--text-secondary); font-weight:500;">
+            OSRM + PostGIS Core Solver
+        </div>
     </header>
 
     <div class="main-layout">
         <aside class="sidebar">
-            <form id="trip-form">
-                <div class="form-group">
-                    <label for="start">Start Location</label>
-                    <input type="text" id="start" name="start" placeholder="e.g. Dallas, TX" value="Dallas, TX" />
-                </div>
-                <div class="form-group">
-                    <label for="finish">Finish Location</label>
-                    <input type="text" id="finish" name="finish" placeholder="e.g. Atlanta, GA" value="Atlanta, GA" />
-                </div>
-                <div class="form-group">
-                    <label for="fuel">Starting Fuel (gallons)</label>
-                    <input type="number" id="fuel" name="starting_fuel_gallons" value="50" min="0" max="50" step="0.01" />
-                </div>
-                <button type="submit" class="btn-primary" id="plan-btn">
-                    Plan Route
-                </button>
-                <div class="spinner" id="spinner"></div>
-            </form>
+            <div class="sidebar-header">
+                <form id="trip-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="start">Start Location</label>
+                            <input type="text" id="start" name="start" value="Dallas, TX" placeholder="e.g. Dallas, TX" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="finish">Finish Location</label>
+                            <input type="text" id="finish" name="finish" value="Atlanta, GA" placeholder="e.g. Atlanta, GA" required />
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="fuel">
+                                <span>Starting Fuel Tank</span>
+                                <span class="fuel-val-badge" id="fuel-display">50 Gal</span>
+                            </label>
+                            <div class="fuel-control">
+                                <input type="range" id="fuel-slider" min="0" max="50" step="1" value="50" class="fuel-slider" />
+                                <input type="hidden" id="fuel" name="starting_fuel_gallons" value="50" />
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="error-box" id="error-box"></div>
+                    <button type="submit" class="btn-primary" id="plan-btn">
+                        <span>Plan Optimal Route</span>
+                        <div class="spinner" id="spinner"></div>
+                    </button>
+                </form>
 
-            <div class="results-panel" id="results-panel">
-                <div class="result-card">
-                    <h3>🗺️ Route Summary</h3>
-                    <div class="stat-row">
-                        <span class="stat-label">Route Distance</span>
-                        <span class="stat-value" id="route-dist">—</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Est. Duration</span>
-                        <span class="stat-value" id="route-time">—</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Trip Miles (incl. detours)</span>
-                        <span class="stat-value" id="trip-miles">—</span>
-                    </div>
-                </div>
+                <div class="error-box" id="error-box" style="margin-top:12px;"></div>
+            </div>
 
-                <div class="result-card">
-                    <h3>⛽ Fuel Summary</h3>
-                    <div class="stat-row">
-                        <span class="stat-label">Fuel Used</span>
-                        <span class="stat-value" id="fuel-used">—</span>
+            <div class="sidebar-body" id="sidebar-body" style="display:none;">
+                <!-- Hero Total Cost Card -->
+                <div class="hero-cost-card">
+                    <div>
+                        <div class="hero-cost-label">Total Fuel Cost</div>
+                        <div class="hero-cost-amount" id="hero-cost">$0.00</div>
                     </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Fuel Purchased</span>
-                        <span class="stat-value" id="fuel-bought">—</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Ending Fuel</span>
-                        <span class="stat-value" id="fuel-end">—</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Total Cost</span>
-                        <span class="stat-value cost" id="total-cost">—</span>
-                    </div>
+                    <div class="hero-cost-icon">💵</div>
                 </div>
 
-                <div id="stops-container"></div>
+                <!-- Secondary Metrics -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-title">🛣️ Distance</div>
+                        <div class="metric-val" id="metric-dist">—</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">⏱️ Est. Time</div>
+                        <div class="metric-val" id="metric-time">—</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">⛽ Fuel Used</div>
+                        <div class="metric-val" id="metric-fuel">—</div>
+                    </div>
+                </div>
+
+                <!-- Fuel Stops Section -->
+                <div>
+                    <div class="section-header">
+                        <span>Fuel Stops Breakdown</span>
+                        <span id="stops-count" style="color:var(--accent); font-weight:800;">—</span>
+                    </div>
+                    <div class="stops-list" id="stops-list" style="margin-top:10px;"></div>
+                </div>
             </div>
         </aside>
 
@@ -369,54 +567,64 @@
             crossorigin=""></script>
 
     <script>
-        // Initialize map centered on the US
-        const map = L.map('map').setView([39.8283, -98.5795], 4);
+        // Sync fuel slider with hidden field and display badge
+        const fuelSlider = document.getElementById('fuel-slider');
+        const fuelInput = document.getElementById('fuel');
+        const fuelDisplay = document.getElementById('fuel-display');
+
+        fuelSlider.addEventListener('input', (e) => {
+            const val = e.target.value;
+            fuelInput.value = val;
+            fuelDisplay.textContent = `${val} Gal`;
+        });
+
+        // Initialize map centered on USA
+        const map = L.map('map', { zoomControl: true }).setView([38.5000, -96.0000], 4);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             maxZoom: 18,
         }).addTo(map);
 
         let routeLayer = null;
         let markersLayer = L.layerGroup().addTo(map);
+        let stationMarkersMap = {};
 
-        // Custom icons
+        // Custom Markers
         const originIcon = L.divIcon({
             className: 'custom-marker',
-            html: '<div style="background:#10b981;color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);">A</div>',
-            iconSize: [32, 32],
-            iconAnchor: [16, 16],
+            html: '<div style="background:#10b981;color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;border:2.5px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.4);">A</div>',
+            iconSize: [30, 30],
+            iconAnchor: [15, 15],
         });
 
         const destIcon = L.divIcon({
             className: 'custom-marker',
-            html: '<div style="background:#ef4444;color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);">B</div>',
-            iconSize: [32, 32],
-            iconAnchor: [16, 16],
+            html: '<div style="background:#ef4444;color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;border:2.5px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.4);">B</div>',
+            iconSize: [30, 30],
+            iconAnchor: [15, 15],
         });
 
-        function stationIcon(num) {
+        function createStationIcon(num, priceColor = '#3b82f6') {
             return L.divIcon({
                 className: 'custom-marker',
-                html: `<div style="background:#3b82f6;color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);">${num}</div>`,
+                html: `<div style="background:${priceColor};color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;border:2px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.35);">${num}</div>`,
                 iconSize: [28, 28],
                 iconAnchor: [14, 14],
             });
         }
 
-        // Form submission
+        // Form Submit
         document.getElementById('trip-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const btn = document.getElementById('plan-btn');
             const spinner = document.getElementById('spinner');
             const errorBox = document.getElementById('error-box');
-            const resultsPanel = document.getElementById('results-panel');
+            const sidebarBody = document.getElementById('sidebar-body');
 
             btn.disabled = true;
-            btn.textContent = 'Planning…';
-            spinner.style.display = 'block';
+            spinner.style.display = 'inline-block';
             errorBox.classList.remove('active');
-            resultsPanel.classList.remove('active');
 
             const payload = {
                 start: document.getElementById('start').value,
@@ -434,114 +642,128 @@
                 const data = await resp.json();
 
                 if (!resp.ok) {
-                    const msg = data.error?.message || JSON.stringify(data);
+                    const msg = data.error?.message || 'Failed to calculate route.';
                     throw new Error(msg);
                 }
 
-                displayResults(data);
-                drawOnMap(data);
+                renderResults(data);
+                renderMap(data);
+                sidebarBody.style.display = 'flex';
 
             } catch (err) {
                 errorBox.textContent = err.message;
                 errorBox.classList.add('active');
             } finally {
                 btn.disabled = false;
-                btn.textContent = 'Plan Route';
                 spinner.style.display = 'none';
             }
         });
 
-        function displayResults(data) {
-            const panel = document.getElementById('results-panel');
+        function renderResults(data) {
             const summary = data.summary;
+            const stops = data.fuel_stops;
 
-            document.getElementById('route-dist').textContent =
-                `${data.route.distance_miles.toFixed(1)} mi`;
-            document.getElementById('route-time').textContent =
-                `${Math.round(data.route.estimated_duration_minutes)} min (${(data.route.estimated_duration_minutes / 60).toFixed(1)} hrs)`;
-            document.getElementById('trip-miles').textContent =
-                `${summary.total_estimated_trip_miles.toFixed(1)} mi`;
-            document.getElementById('fuel-used').textContent =
-                `${summary.total_route_fuel_used_gallons.toFixed(2)} gal`;
-            document.getElementById('fuel-bought').textContent =
-                `${summary.fuel_purchased_on_route_gallons.toFixed(2)} gal`;
-            document.getElementById('fuel-end').textContent =
-                `${summary.ending_fuel_gallons.toFixed(2)} gal`;
-            document.getElementById('total-cost').textContent =
-                `$${summary.total_fuel_cost_on_route_usd.toFixed(2)}`;
+            // Hero Cost & Summary Metrics
+            document.getElementById('hero-cost').textContent = `$${summary.total_fuel_cost_on_route_usd.toFixed(2)}`;
+            document.getElementById('metric-dist').textContent = `${data.route.distance_miles.toFixed(0)} mi`;
+            document.getElementById('metric-time').textContent = `${(data.route.estimated_duration_minutes / 60).toFixed(1)} hrs`;
+            document.getElementById('metric-fuel').textContent = `${summary.total_route_fuel_used_gallons.toFixed(1)} gal`;
 
-            // Fuel stops
-            const container = document.getElementById('stops-container');
-            container.innerHTML = '';
+            // Stops List
+            const stopsList = document.getElementById('stops-list');
+            const stopsCountBadge = document.getElementById('stops-count');
+            stopsList.innerHTML = '';
+            stopsCountBadge.textContent = `${stops.length} Stop${stops.length === 1 ? '' : 's'}`;
 
-            if (data.fuel_stops.length === 0) {
-                container.innerHTML = '<div class="result-card"><h3>✅ No Stops Needed</h3><p style="color:var(--text-secondary);font-size:0.85rem;">The starting fuel is sufficient for the entire trip.</p></div>';
-            } else {
-                const header = document.createElement('div');
-                header.className = 'result-card';
-                header.innerHTML = `<h3>📍 Fuel Stops (${data.fuel_stops.length})</h3>`;
-                container.appendChild(header);
-
-                data.fuel_stops.forEach(stop => {
-                    const card = document.createElement('div');
-                    card.className = 'stop-card';
-                    card.innerHTML = `
-                        <div class="stop-header">
-                            <div class="stop-number">${stop.sequence}</div>
-                            <div class="stop-name">${stop.name}</div>
-                            <div class="stop-price">$${stop.price_per_gallon.toFixed(3)}/gal</div>
-                        </div>
-                        <div class="stop-details">
-                            ${stop.address}<br>
-                            Mile ${stop.route_position_miles.toFixed(1)} · ${stop.distance_from_route_miles.toFixed(1)} mi off route<br>
-                            Buy ${stop.gallons_to_buy.toFixed(2)} gal · <strong>$${stop.cost_usd.toFixed(2)}</strong>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
+            if (stops.length === 0) {
+                stopsList.innerHTML = `
+                    <div style="background:var(--bg-card); padding:14px; border-radius:10px; border:1px solid var(--border); text-align:center; font-size:0.85rem; color:var(--text-secondary);">
+                        ✅ Starting tank is sufficient for this entire route without fuel stops.
+                    </div>`;
+                return;
             }
 
-            panel.classList.add('active');
+            stops.forEach(stop => {
+                const card = document.createElement('div');
+                card.className = 'stop-card';
+                card.dataset.seq = stop.sequence;
+                card.innerHTML = `
+                    <div class="stop-top">
+                        <div class="stop-title-group">
+                            <div class="stop-badge">${stop.sequence}</div>
+                            <div class="stop-name" title="${stop.name}">${stop.name}</div>
+                        </div>
+                        <div class="stop-price-badge">$${stop.price_per_gallon.toFixed(3)} / gal</div>
+                    </div>
+                    <div class="stop-address">${stop.address}, ${stop.city}, ${stop.state}</div>
+                    <div class="stop-meta">
+                        <span>Mile ${stop.route_position_miles.toFixed(1)} (${stop.distance_from_route_miles.toFixed(1)} mi off route)</span>
+                        <span class="stop-buy">Buy ${stop.gallons_to_buy.toFixed(2)} gal ($${stop.cost_usd.toFixed(2)})</span>
+                    </div>
+                `;
+
+                // Interactive Click-to-Pan on Map
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('.stop-card').forEach(c => c.classList.remove('active-stop'));
+                    card.classList.add('active-stop');
+
+                    if (stationMarkersMap[stop.sequence]) {
+                        const marker = stationMarkersMap[stop.sequence];
+                        map.flyTo(marker.getLatLng(), 11, { duration: 1.2 });
+                        marker.openPopup();
+                    }
+                });
+
+                stopsList.appendChild(card);
+            });
         }
 
-        function drawOnMap(data) {
-            // Clear previous
+        function renderMap(data) {
             if (routeLayer) map.removeLayer(routeLayer);
             markersLayer.clearLayers();
+            stationMarkersMap = {};
 
-            // Draw route
+            // Render route polyline
             const routeCoords = data.route.geometry.coordinates.map(c => [c[1], c[0]]);
             routeLayer = L.polyline(routeCoords, {
                 color: '#3b82f6',
-                weight: 4,
-                opacity: 0.8,
+                weight: 5,
+                opacity: 0.85,
+                lineJoin: 'round'
             }).addTo(map);
 
-            // Origin marker
+            // Origin & Destination
             L.marker([data.origin.latitude, data.origin.longitude], { icon: originIcon })
                 .bindPopup(`<strong>Origin</strong><br>${data.origin.label}`)
                 .addTo(markersLayer);
 
-            // Destination marker
             L.marker([data.destination.latitude, data.destination.longitude], { icon: destIcon })
                 .bindPopup(`<strong>Destination</strong><br>${data.destination.label}`)
                 .addTo(markersLayer);
 
-            // Fuel stop markers
+            // Fuel Stops
             data.fuel_stops.forEach(stop => {
-                L.marker([stop.location.latitude, stop.location.longitude], { icon: stationIcon(stop.sequence) })
-                    .bindPopup(`
-                        <strong>${stop.name}</strong><br>
-                        ${stop.address}<br>
-                        <strong>$${stop.price_per_gallon.toFixed(3)}/gal</strong><br>
-                        Buy ${stop.gallons_to_buy.toFixed(2)} gal · $${stop.cost_usd.toFixed(2)}
-                    `)
-                    .addTo(markersLayer);
+                const marker = L.marker([stop.location.latitude, stop.location.longitude], {
+                    icon: createStationIcon(stop.sequence, '#3b82f6')
+                }).bindPopup(`
+                    <strong style="color:#f8fafc;font-size:0.95rem;">${stop.name}</strong><br>
+                    <span style="color:#94a3b8;font-size:0.8rem;">${stop.address}, ${stop.city}, ${stop.state}</span><br>
+                    <hr style="border:0;border-top:1px solid #26334d;margin:6px 0;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <span style="color:#10b981;font-weight:800;font-size:0.9rem;">$${stop.price_per_gallon.toFixed(3)}/gal</span>
+                        <span style="font-weight:700;color:#f8fafc;">Buy ${stop.gallons_to_buy.toFixed(2)} gal</span>
+                    </div>
+                `).addTo(markersLayer);
+
+                stationMarkersMap[stop.sequence] = marker;
             });
 
-            // Fit bounds
+            // Fit map bounds
             map.fitBounds(routeLayer.getBounds(), { padding: [40, 40] });
         }
+
+        // Run default load on startup
+        document.getElementById('trip-form').dispatchEvent(new Event('submit'));
     </script>
 </body>
 </html>
